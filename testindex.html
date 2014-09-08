@@ -11,7 +11,7 @@ var testworker = new Worker("js/testworker.js");
 </head>
 <body>
 <script>
-var runs=200;
+var runs=100000;
 function runTest(){
    var newrow = document.createElement('DIV');
    var html="<span class=testrow >TEST: "+runs+"</span>";
@@ -21,7 +21,7 @@ function runTest(){
     html+="<span class=testrow id='time$id'>TIME</span>".replace("$id",runs+"");
 
    newrow.innerHTML=html;
-   document.body.appendChild(newrow);
+   // document.body.appendChild(newrow);
 
    testworker.postMessage(runs);
    runs--;
@@ -29,10 +29,10 @@ function runTest(){
 testworker.onmessage=function(e){
    var tid = e.data.id;
    if(e.data.state=='START'){
-     document.getElementById('num'+tid).innerHTML=e.data.inp;
+   //  document.getElementById('num'+tid).innerHTML=e.data.inp;
      return;
    }
-   document.getElementById('pass'+tid).innerHTML="PASS:"+e.data.passed+"";  
+   //document.getElementById('pass'+tid).innerHTML="PASS:"+e.data.passed+"";  
 //   var html = "TEST: "+e.data.id+" , NUM : "+e.data.inp+" , Passed: "+e.data.passed+"";
 
 
