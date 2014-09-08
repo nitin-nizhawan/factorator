@@ -1,8 +1,11 @@
 importScripts('biginteger.js');
 importScripts('primegenerator.js');
 importScripts('factorator.js');
+importScripts("baillie_psw.js");
+
 var factorator = new Factorator();
 factorator.init();
+var primegen = new PrimeGenerator();
 onmessage=(function(){
     
 
@@ -32,10 +35,26 @@ onmessage=(function(){
     }
     
     function doTest(testid){
-        var num= getRandomNumString();
+        var num= parseInt(testid,10);//getRandomNumString();
         postMessage({state:'START',id:testid,inp:num});
-        var expvec = factorator.factor(num);
-        postMessage({state:'TESTCOMPLETE',id:testid,expvec:expvec,inp:num,passed:verify(num,expvec)});
+		try{
+		//console.log("start bpsw");
+		var bpsw = baillie_psw(new BigInteger(num));
+		//console.log("start isprime");
+		var pr = primegen.isprime(num);
+		}catch(e){ console.log(e);}
+		if(bpsw!=pr){
+		  console.log(bpsw+","+pr+","+num);
+		}
+		if(true){
+		  //  console.log(num +" is  prime id="+testid+", pass: "+());
+		    var expvec = [{base:num,exp:1}];
+		} else {
+            var expvec = factorator.factor(num);
+		}
+       // postMessage({state:'TESTCOMPLETE',id:testid,expvec:expvec,inp:num,passed:verify(num,expvec)});
+	    
+	    postMessage({state:'TESTCOMPLETE',id:testid,expvec:expvec,inp:num,passed:(bpsw==pr)});
     }
 
 

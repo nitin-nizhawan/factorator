@@ -44,6 +44,7 @@ PrimeGenerator=(function(){
         }
     }
  }
+ pg.prototype.isprime=isprime;
  pg.prototype.fill=fillPrimes;
  pg.prototype.primes = primes;
 
