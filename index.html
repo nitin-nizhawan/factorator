@@ -1,0 +1,70 @@
+<html>
+<head>
+<title> Factorator</title>
+<script>
+console.log("Creating Worker");
+var worker = new Worker('js/fworker.js');
+console.log("Worker Created");
+function renderFactors(data){
+    var expvec = data.result;
+    var time = data.time;
+    var html=[];
+    for(var i=0;i<expvec.length;i++){
+      if(i>0) html.push(" X ");
+      var item = expvec[i];
+      html.push(item.base)
+      if(item.exp>1){
+          html.push("<sup>",item.exp,"</sup>");      
+      }
+    }
+    document.getElementById("output").innerHTML=html.join("")+" ( "+time+" ms )";
+}
+function docalc(){
+
+   var inp = document.getElementById("intinp").value;
+   
+   worker.onmessage=function(e){
+      if(e.data.state=='DONE'){
+          renderFactors(e.data);
+      } else if(e.data.state=='START'){
+          document.getElementById("output").innerHTML="Started ...";         
+      }
+   }
+   worker.postMessage(inp);
+
+}
+
+</script>
+</head>
+<body>
+<div id="trymesection">
+  
+</div>
+<label for="intinp" >Input:</label><textarea id="intinp" type=text rows=20 cols=60 ></textarea>
+<label>Factors</label><div id="output" ></div>
+<input type="button" value="find" onclick="docalc()"/>
+<script>
+var numlist=[
+               "708245393",
+            "433794012913",
+          "23710270989359",
+        "4863307462164497",
+      "427838162504806709",
+    "83263632018953475961"
+            ];
+function createtryme(){
+   var trymesecdiv = document.getElementById('trymesection');
+   var html=[];
+   for(var i=0;i<numlist.length;i++){
+       var num=numlist[i];
+       html.push("<div onclick='trymeclicked(\"",num,"\")' >",num,"</div>");
+   }  
+   trymesecdiv.innerHTML=html.join("");
+}
+function trymeclicked(valstr){
+   document.getElementById('intinp').value=valstr;
+}
+createtryme();
+</script>
+</body>
+</html>
