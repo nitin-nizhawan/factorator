@@ -1,6 +1,6 @@
 var Factorator=(function(){
   var MAX_JS_INT = 9007199254740992;
-  var MAX_32_BIT  = 1<<32;
+  var MAX_32_BIT  = 16000*16000;
   var pg = new PrimeGenerator();
   pg.fill(1<<16);
   var primes=pg.primes;
@@ -54,7 +54,7 @@ var Factorator=(function(){
     //  return ((((x*x)>>>0)+k)>>>0)%n;
   }
   function fpr_big(x,n,k){
-      return x.multiply(x).subtract(k).remainder(n);
+      return x.multiply(x).add(BigInteger.ONE.negate()).remainder(n);
   }
   function pollardRho(n){
      var x = 2;
@@ -74,10 +74,52 @@ var Factorator=(function(){
      }
      return [{base:d,exp:1},{base:n/d,exp:1}];
           
-  }
+  } 
+  function factor(n){
+     var n_int = parseInt(n+"",10);
+	 //console.log("factor () "+n_int+" , "+(n_int < MAX_32_BIT));
+      if((n_int+"")==n){
+          if(n_int<MAX_32_BIT){
+             return factorUsingPrimeNumber(n_int);
+          } else {
+             return pollardRho_big(n_int+"");
+          }
+      } else {
 
+          return pollardRho_big(n);
+          //return rbfactor_big(n);
+      }
+  }
+  function factorUsingPollardRhoBig(num){
+     var map={};
+	 var expvec = [{base:num,exp:1}];
+     while(expvec.length>0){
+	     var ecomp = expvec.shift();
+		 //console.log("ecomp = "+ecomp.base+" , "+ecomp.exp);
+		 var base = ecomp.base;
+		 var exp = ecomp.exp;
+		 if(baillie_psw(new BigInteger(base))){ // is prime?
+		     map[base+""] = map[base+""]?(map[base+""]+exp):1;
+			/// console.log("num ("+num+")= "+base);
+		 } else {
+		     var nv = factor(base);
+			 for(var k=0;k<nv.length;k++){
+			    nv[k].exp+=exp;
+			   expvec.push(nv[k]);
+			 }
+			 
+		 }
+	 }
+	 var ret=[];
+	 for(var base in map){
+	    ret.push({base:base,exp:map[base]});
+	 }
+	 return ret;
+  }
   function pollardRho_big(n){
+     
      n = new BigInteger(n);
+	// console.log("pollardRho_big "+n.toString());
      var x = new BigInteger(2);
      var y = new BigInteger(2);
      var d = BigInteger.ONE;
@@ -89,13 +131,14 @@ var Factorator=(function(){
          d = gcd_big(x.subtract(y).abs(),n);
      }
      k = k.next(); 
-  }while(d.compare(n)==0&&k.compare(new BigInteger(4))<0);
+  }while(d.compare(n)==0);
      if(d.compare(n)==0){
          return [{base:1,exp:1}];
      }
      return [{base:d.toString(),exp:1},{base:n.divide(d).toString(),exp:1}];
           
   }
+  
   function rbfactor_big(n){
       n = new  BigInteger(n);
       var rand_big1 = new BigInteger(Math.floor(Math.random()*100));
@@ -267,18 +310,7 @@ function millerRabinPrime(n){
     }    
   }
   tp.prototype.factor=function(n){
-      var n_int = parseInt(n,10);
-      if((n_int+"")==n){
-          if(n_int<MAX_32_BIT){
-             return factorUsingPrimeNumber(n_int);
-          } else {
-             return pollardRho(n_int);
-          }
-      } else {
-
-          return pollardRho_big(n);
-          //return rbfactor_big(n);
-      }
+      return factorUsingPollardRhoBig(n);
   }
   return tp;
 })();

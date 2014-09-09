@@ -10,7 +10,7 @@ onmessage=(function(){
     
 
     function getRandomNumString(){
-         var digits = Math.floor(Math.random()*12)+7;
+         var digits = Math.floor(Math.random()*12)+10;
          var val=[];
          for(var i=0;i<digits;i++){
             val[i] = Math.floor(Math.random()*10);
@@ -35,26 +35,18 @@ onmessage=(function(){
     }
     
     function doTest(testid){
-        var num= parseInt(testid,10);//getRandomNumString();
+        var num= getRandomNumString();
         postMessage({state:'START',id:testid,inp:num});
-		try{
-		//console.log("start bpsw");
-		var bpsw = baillie_psw(new BigInteger(num));
-		//console.log("start isprime");
-		var pr = primegen.isprime(num);
-		}catch(e){ console.log(e);}
-		if(bpsw!=pr){
-		  console.log(bpsw+","+pr+","+num);
-		}
-		if(true){
+		
+		if(baillie_psw(new BigInteger(num))){
 		  //  console.log(num +" is  prime id="+testid+", pass: "+());
 		    var expvec = [{base:num,exp:1}];
 		} else {
             var expvec = factorator.factor(num);
 		}
-       // postMessage({state:'TESTCOMPLETE',id:testid,expvec:expvec,inp:num,passed:verify(num,expvec)});
+       postMessage({state:'TESTCOMPLETE',id:testid,expvec:expvec,inp:num,passed:verify(num,expvec)});
 	    
-	    postMessage({state:'TESTCOMPLETE',id:testid,expvec:expvec,inp:num,passed:(bpsw==pr)});
+	    //postMessage({state:'TESTCOMPLETE',id:testid,expvec:expvec,inp:num,passed:(bpsw==pr)});
     }
 
 

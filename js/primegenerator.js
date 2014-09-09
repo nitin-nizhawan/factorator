@@ -24,6 +24,8 @@ PrimeGenerator=(function(){
 /*     if(n<=primes[primes.length-1]){
          return primeSearch(n)!=-1;
      }*/
+	 if(n==1) return false;
+	 if(n==2||n==3) return true;
      var mcheck = Math.floor(Math.sqrt(n))+1;
      if(primes[primes.length-1]<mcheck){
         fillPrimes(mcheck); 
