@@ -5,6 +5,8 @@ span.testrow {
   padding:4px;
 }
 </style>
+<script src="js/biginteger.js"></script>
+<script src="js/squafof.js" ></script>
 <script>
 var testworker = new Worker("js/testworker.js");
 </script>
@@ -12,6 +14,7 @@ var testworker = new Worker("js/testworker.js");
 <body>
 <script>
 var runs=200;
+var timemap={};
 function runTest(){
    var newrow = document.createElement('DIV');
    var html="<span class=testrow >TEST: "+runs+"</span>";
@@ -29,17 +32,19 @@ function runTest(){
 testworker.onmessage=function(e){
    var tid = e.data.id;
    if(e.data.state=='START'){
-    document.getElementById('num'+tid).innerHTML=e.data.inp;
+    document.getElementById('num'+tid).innerHTML=e.data.inp+" ( "+(e.data.inp.length)+" ) ";
+	timemap[tid]=new Date().getTime();
      return;
    }
    document.getElementById('pass'+tid).innerHTML="PASS:"+e.data.passed+"";  
+   document.getElementById('time'+tid).innerHTML="Time: "+(new Date().getTime()-timemap[tid])+" ms";  
    var evec = e.data.expvec;
    var html=[];
    for(var i=0;i<evec.length;i++){
        if(i>0) html.push(" X ");
 	   html.push(evec[i].base);
-	   if((evec.exp+"")!=1){
-	       html.push("<sup>",evec.exp,"</sup>");
+	   if((evec[i].exp+"")!=1){
+	       html.push("<sup>",evec[i].exp,"</sup>");
 		   
 	   }
    }

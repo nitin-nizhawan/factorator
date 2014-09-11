@@ -1,4 +1,4 @@
-
+var baillie_psw=(function(){
 function U_V_subscript(k,n,U,V,P,Q,D){
 
   var digits = [];
@@ -184,7 +184,7 @@ function D_chooser(candidate){
     }
     return D;
 }
-
+// find if the candidate is perfect square asap
 function perfect_sq(candidate){
     var lo = BigInteger.ZERO,
         hi = candidate,
@@ -249,5 +249,8 @@ function baillie_psw(candidate){
    return true;
 }
 
+return baillie_psw;
+
+})();
 
 

@@ -24,8 +24,10 @@ PrimeGenerator=(function(){
 /*     if(n<=primes[primes.length-1]){
          return primeSearch(n)!=-1;
      }*/
+	
 	 if(n==1) return false;
 	 if(n==2||n==3) return true;
+
      var mcheck = Math.floor(Math.sqrt(n))+1;
      if(primes[primes.length-1]<mcheck){
         fillPrimes(mcheck); 
@@ -40,6 +42,7 @@ PrimeGenerator=(function(){
      return true;
  }
  function fillPrimes(max){
+ var starttime = new Date().getTime();
     for(var d = primes[primes.length-1]+2;d<=max;d+=2){
         if(isprime(d)){
             primes.push(d);

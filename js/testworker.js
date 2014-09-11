@@ -2,6 +2,7 @@ importScripts('biginteger.js');
 importScripts('primegenerator.js');
 importScripts('factorator.js');
 importScripts("baillie_psw.js");
+importScripts("squafof.js");
 
 var factorator = new Factorator();
 factorator.init();
@@ -10,7 +11,7 @@ onmessage=(function(){
     
 
     function getRandomNumString(){
-         var digits = Math.floor(Math.random()*12)+10;
+         var digits = Math.floor(Math.random()*12)+12;
          var val=[];
          for(var i=0;i<digits;i++){
             val[i] = Math.floor(Math.random()*10);

@@ -1,8 +1,8 @@
 var Factorator=(function(){
   var MAX_JS_INT = 9007199254740992;
-  var MAX_32_BIT  = 16000*16000;
+  var MAX_32_BIT  = 65000*65000;
   var pg = new PrimeGenerator();
-  pg.fill(1<<16);
+  pg.fill(65000);
   var primes=pg.primes;
   function gcd(b,m){
       while(true){
@@ -86,34 +86,42 @@ var Factorator=(function(){
           }
       } else {
 
-          return pollardRho_big(n);
+          return squafof(n);//pollardRho_big(n);
           //return rbfactor_big(n);
       }
   }
   function factorUsingPollardRhoBig(num){
+     //console.log("Start Factoring "+num);
      var map={};
 	 var expvec = [{base:num,exp:1}];
      while(expvec.length>0){
+	    // console.log(expvec);
+		// console.log(map);
 	     var ecomp = expvec.shift();
 		 //console.log("ecomp = "+ecomp.base+" , "+ecomp.exp);
 		 var base = ecomp.base;
 		 var exp = ecomp.exp;
 		 if(baillie_psw(new BigInteger(base))){ // is prime?
-		     map[base+""] = map[base+""]?(map[base+""]+exp):1;
+		     map[base+""] = map[base+""]?(map[base+""]+exp):exp;
 			/// console.log("num ("+num+")= "+base);
 		 } else {
 		     var nv = factor(base);
+			 //console.log(nv);
 			 for(var k=0;k<nv.length;k++){
-			    nv[k].exp+=exp;
+			    nv[k].exp*=exp;
 			   expvec.push(nv[k]);
 			 }
 			 
 		 }
 	 }
+
+
 	 var ret=[];
 	 for(var base in map){
 	    ret.push({base:base,exp:map[base]});
 	 }
+	 //console.log(ret);
+	 		// console.log(map);
 	 return ret;
   }
   function pollardRho_big(n){

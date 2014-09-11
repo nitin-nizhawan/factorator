@@ -1,6 +1,9 @@
-importScripts("primegenerator.js")
-importScripts("biginteger.js");
-importScripts("factorator.js");
+importScripts('biginteger.js');
+importScripts("baillie_psw.js");
+importScripts('primegenerator.js');
+importScripts('factorator.js');
+importScripts("squafof.js");
+
 var factorator = new Factorator();
 factorator.init();
 onmessage=function(msg){
