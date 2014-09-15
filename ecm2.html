@@ -1,0 +1,35 @@
+<html>
+<head>
+<script src="js/primegenerator.js"></script>
+<script src="js/biginteger.js"></script>
+<script src="js/ecm2.js"></script>
+<script>
+var heuristics = {
+    "6":[147,10],
+    "9":[682,24],
+    "12":[2462,55],
+    "18":[23462,231],
+    "24":[162730,833],
+    "30":[945922,2594]
+  };
+var primegen = new PrimeGenerator();
+primegen.fill(65000);
+var primes = primegen.primes;
+var b_max = 2462;
+var facto = BigInteger.ONE;
+for(var i = 0;primes[i]<=b_max;i++){
+    var mult = new BigInteger(primes[i]);
+   /* while(mult.compare(new BigInteger(b_max))<0){
+       mult = mult.multiply(new BigInteger(primes[i]));
+    }*/
+    facto = facto.multiply(mult);
+}
+ console.log("facto = "+facto.toString());
+var startime = new Date().getTime();
+console.log(ef(new BigInteger("680313331064796146619569"),facto,new BigInteger(5)).toString());
+console.log("Time "+(new Date().getTime()-startime)+"ms");
+</script>
+</head>
+<body>
+</body>
+</html>

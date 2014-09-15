@@ -86,7 +86,7 @@ var Factorator=(function(){
           }
       } else {
 
-          return squafof(n);//pollardRho_big(n);
+          return pollardRho_big(n);
           //return rbfactor_big(n);
       }
   }

@@ -34,30 +34,29 @@ function integer_sqrt(target){
     */
     var high = target;
     var mid;
-    while(low.compare(high)<0) {
+    while(low.compare(high)<=0) {
        mid = low.add(high).divide(BigInteger.small[2]);
        var currsq = mid.multiply(mid);
 
        if(currsq.compare(target)==0) {
            return(mid);
-       }
-       if(currsq.compare(target) <0) {
+       } else if(currsq.compare(target) <0) {
          low =  mid.next();
          if(low.multiply(low).compare(target)>0) {
              return(low.prev());
 	     }
-       } else {
+       } else if(currsq.compare(target)>0){
           high = mid.prev();
-       }
+       } 
     }
-	if(low.compare(high)==0){
-	   if(low.multiply(low).compare(target)==0){
-	       return low;
-	   }
-	}
 }
 function squafof_internal(N,k){
+//  var start_integer_sqrt = new Date().getTime();
   var kN_sqrt = integer_sqrt(N.multiply(k));
+//  console.log("Time to integer sqrt "+(Date.now()-start_integer_sqrt));
+/*  console.log("kN_sqrt = "+ kN_sqrt.toString());
+  console.log("Check kn_sqrt^2= "+kN_sqrt.multiply(kN_sqrt).toString());
+  console.log("Check kn_sqrt+1 ^2=)"+kN_sqrt.next().multiply(kN_sqrt.next()).toString());*/
   var pold;
   var P = kN_sqrt;
   var Q0 = BigInteger.ONE;
@@ -66,12 +65,12 @@ function squafof_internal(N,k){
   while(!perfect_sq(Q1)){
      pold = P;
      bi = kN_sqrt.add(P).divide(Q1);
-	 P = bi.multiply(Q1).subtract(P);
-	 var tmpQ = Q1;
-	 Q1 = Q0 + bi.multiply(pold.subtract(P));
-	 Q0 = tmpQ;
+     P = bi.multiply(Q1).subtract(P);
+     var tmpQ = Q1;
+     Q1 = Q0 + bi.multiply(pold.subtract(P));
+     Q0 = tmpQ;
   }
-  
+ console.log("Found sqrt"); 
   var Q1_sqrt = integer_sqrt(Q1);
   bi = kN_sqrt.subtract(P).divide(Q1_sqrt);
   P = bi.multiply(Q1_sqrt).add(P);
@@ -80,14 +79,15 @@ function squafof_internal(N,k){
   
  while(pold.compare(P)!=0){
     pold = P;
-	bi = kN_sqrt.add(P).divide(Q1);
-	P = bi.multiply(Q1).subtract(P);
-	 var tmpQ = Q1;
-	 Q1 = Q0 + bi.multiply(pold.subtract(P));
-	 Q0 = tmpQ;
+    bi = kN_sqrt.add(P).divide(Q1);
+    P = bi.multiply(Q1).subtract(P);
+    var tmpQ = Q1;
+    Q1 = Q0 + bi.multiply(pold.subtract(P));
+    Q0 = tmpQ;
  } 
  
  var f = gcd_big(N,P);
+ console.log("Complete one round");
  if(f.compare(BigInteger.ONE)!=0 && f.compare(N)!=0){
      return f
  }
@@ -97,6 +97,7 @@ function squafof_internal(N,k){
 * assumes n is composite
 */
 function squafof(N){
+console.log("Using squafof");
    N = new BigInteger(N);
    var exp=1;
    
@@ -108,9 +109,19 @@ function squafof(N){
 	 }
    }
    var f=null;
-   var k = BigInteger.ONE;
-   while(!(f=squafof_internal(N,k))){
-     k = k.next();
+   var k = BigInteger.small[2];
+   var mult = [1, 3, 5, 7, 
+				11, 3*5, 3*7, 3*11, 
+				5*7, 5*11, 7*11, 
+				3*5*7, 3*5*11, 3*7*11, 
+				5*7*11, 3*5*7*11];
+   var ki=0;
+   //console.log("N= "+N.toString());
+   var multiplier = 2*mult[mult.length-1-ki];
+   //console.log("mult= "+multiplier);
+   while(!(f=squafof_internal(N,new BigInteger(multiplier)))){
+     k = k.next();ki++;
+     multiplier = 2*mult[mult.length-1-ki]; 
    }
    return [{base:f.toString(),exp:exp},{base:N.divide(f),exp:exp}];
 }
