@@ -19,9 +19,9 @@ var b_max = 2462;
 var facto = BigInteger.ONE;
 for(var i = 0;primes[i]<=b_max;i++){
     var mult = new BigInteger(primes[i]);
-   /* while(mult.compare(new BigInteger(b_max))<0){
+    while(mult.compare(new BigInteger(b_max))<0){
        mult = mult.multiply(new BigInteger(primes[i]));
-    }*/
+    }
     facto = facto.multiply(mult);
 }
  console.log("facto = "+facto.toString());
